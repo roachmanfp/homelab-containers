@@ -18,7 +18,7 @@ jobs:
          
          -  name: Get all directories
             id: directories
-            run: echo directories=$(tree -J -d -L 1 | jq -c '.[0].contents | map(.name)') >> $GITHUB_OUTPUT
+            run: echo "directories=$(tree -J -d -L 1 | jq -c '.[0].contents | map(.name)')" >> $GITHUB_OUTPUT
 
    build:
       runs-on: ubuntu-latest
@@ -43,5 +43,5 @@ jobs:
             uses: docker/build-push-action@v6
             with:
                push: true
-               tags: roachmanfp/${{ matrix.name }}:latest
-               context: ${{ matrix.name }}/
+               tags: roachmanfp/${{ matrix.container }}:latest
+               context: ${{ matrix.container }}/
