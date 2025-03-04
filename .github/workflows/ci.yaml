@@ -1,0 +1,47 @@
+name: Build containers
+
+on:
+   push:
+   pull_request:
+   schedule:
+      - cron: "0 0 * * 1"
+
+jobs:
+   define-matrix:
+      runs-on: ubuntu-latest
+      outputs:
+         directories: ${{ steps.directories.outputs.directories }}
+      
+      steps:
+         -  name: Checkout
+            uses: actions/checkout@v4
+         
+         -  name: Get all directories
+            id: directories
+            run: echo directories=$(tree -J -d -L 1 | jq -c '.[0].contents | map(.name)') >> $GITHUB_OUTPUT
+
+   build:
+      runs-on: ubuntu-latest
+      strategy:         
+         matrix:
+            container: ${{ fromJSON(needs.define-matrix.outputs.directories) }}
+      steps:
+         -  name: Checkout
+            uses: actions/checkout@v4
+
+         -  name: Setup Docker
+            uses: docker/setup-buildx-action@v3
+
+         -  name: Login to GitHub Container Registry
+            uses: docker/login-action@v3
+            with:
+               registry: ghcr.io
+               username: ${{ github.actor }}
+               password: ${{ secrets.GITHUB_TOKEN }}
+
+         -  name: Build and Push container
+            uses: docker/build-push-action@v6
+            with:
+               push: true
+               tags: roachmanfp/${{ matrix.name }}:latest
+               context: ${{ matrix.name }}/
