@@ -10,7 +10,7 @@ jobs:
    define-matrix:
       runs-on: ubuntu-latest
       outputs:
-         dirs: ${{ steps.directories.outputs.directories }}
+         directories: ${{ steps.directories.outputs.directories }}
       
       steps:
          -  name: Checkout
@@ -24,7 +24,7 @@ jobs:
       runs-on: ubuntu-latest
       strategy:         
          matrix:
-            container: ${{ fromJSON(needs.define-matrix.outputs.dirs) }}
+            container: ${{ needs.define-matrix.outputs.directories }}
       steps:
          -  name: Checkout
             uses: actions/checkout@v4
