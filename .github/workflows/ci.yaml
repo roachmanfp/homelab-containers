@@ -44,5 +44,5 @@ jobs:
             uses: docker/build-push-action@v6
             with:
                push: true
-               tags: roachmanfp/${{ matrix.container }}:latest
+               tags: ghcr.io/roachmanfp/${{ matrix.container }}:latest
                context: ${{ matrix.container }}/
